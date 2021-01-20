@@ -1,24 +1,40 @@
 #!/usr/bin/sh
 
+pqrep -x sxhkd > /dev/null || sxhkd &
 xsetroot -cursor_name left_ptr
-sxhkd &
 $HOME/.config/polybar/launch.sh
-nitrogen --restore &
-picom -b &
-bspc monitor -d I II III IV V VI VII VIII IX X
+xwallpaper --maximize $HOME/Pictures/Wallpaper/*
+xbacklight -set 30
+picom --experimetal-backends -b
+redshift -t 6500:1000
+lxsession &
+xset r rate 360 60
 
-bspc config border_width         0
-bspc config window_gap          12
+bspc monitor -d I II III IV # V VI VII VIII IX X
 
-bspc config split_ratio          0.50
-bspc config borderless_monocle   true
-bspc config gapless_monocle      true
+bspc config border_width          2
+bspc config window_gap            12
 
-bspc config pointer_modifier mod1
-bspc config pointer_action1 move
-bspc config pointer_action2 resize_side
-bspc config pointer_action3 resize_corner
+bspc config split_ratio           0.50
+bspc config borderless_monocle    true
+bspc config gapless_monocle       true
+bspc config focus_follows_pointer true
 
-bspc rule -a Gimp desktop='^8' state=floating follow=on
-bspc rule -a Firefox desktop='^2'
-bspc rule -a mpv state=floating
+# always floating
+bspc rule -a feh state=floating center=on
+bspc rule -a mpv state=floating center=on
+bspc rule -a sxiv state=floating center=on
+
+# 1
+bspc rule -a kitty desktop='^1' focus=on follow=on
+bspc rule -a Xfce4-terminal desktop='^1' focus=on follow=on
+bspc rule -a Urxvt desktop='^1' focus=on follow=on
+bspc rule -a Xterm desktop='^1' focus=on follow=on
+# 2
+bspc rule -a Chromium desktop='^2' focus=on follow=on
+bspc rule -a Brave-bin desktop='^2' focus=on follow=on
+# 3
+bspc rule -a thunar desktop='^3' focus=on follow=on
+bspc rule -a pcmanfm desktop='^3' focus=on follow=on
+# 4
+bspc rule -a TelegramDesktop desktop='^4' focus=on follow=on
