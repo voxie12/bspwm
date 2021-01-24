@@ -10,7 +10,7 @@ alias autoremove='yay -Ycc'
 alias clean='yay -Scc'
 alias cl='clear'
 alias v='vim'
-alias ls='exa -la --group-directories-first'
+alias ls='exa -la --group-directories-first --icons'
 alias vfish='vim $HOME/.config/fish/config.fish'
 alias vbspwm='vim $HOME/.config/bspwm/bspwmrc'
 alias vsxhkd='vim $HOME/.config/sxhkd/sxhkdrc'
@@ -30,6 +30,9 @@ alias youtube-best='youtube-dl -f bestvideo+bestaudio '
 alias youtube-mp3='youtube-dl --extract-audio --audio-format mp3 '
 alias poweroff='sudo powroff'
 alias reboot='sudo reboot'
+alias r='ranger'
+alias n='nnn'
+
 
 # prompt
 starship init fish | source
