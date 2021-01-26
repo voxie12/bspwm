@@ -1,9 +1,9 @@
 #! /bin/bash
 
 [colors]
-background = #282a36
-foreground = #f8f8f2
-red = #FF5555
+background = #CC282828
+foreground = #ebdbb2
+red = #CC241D
 green = #55ff55
 yellow = #ffff55
 blue = #5555ff
@@ -40,7 +40,7 @@ font-0 = "CozetteVector:style=Medium:antialias=true:size=8;2"
 
 modules-left = bspwm
 modules-center = date 
-modules-right = weather xbacklight volume bat
+modules-right = weather network volume memory cpu
 
 ;tray-position = right
 ;tray-padding = 2
@@ -71,6 +71,8 @@ type = custom/script
 exec = curl -s 'wttr.in?format=%C+%t'
 exec-if = ping wttr.in -c 1
 interal = 600
+format-prefix = "WEA: "
+format-prefix-foreground = #5b
 
 [module/sound]
 type = custom/script
@@ -145,74 +147,27 @@ card = intel_backlight
 [module/cpu]
 type = internal/cpu
 interval = 0.5
-; Available tags:
-;   <label> (default)
-;   <bar-load>
-;   <ramp-load>
-;   <ramp-coreload>
-format = <label> <ramp-coreload>
-
-; Available tokens:
-;   %percentage% (default) - total cpu load averaged over all cores
-;   %percentage-sum% - Cumulative load on all cores
-;   %percentage-cores% - load percentage for each core
-;   %percentage-core[1-9]% - load percentage for specific core
-label = CPU: %percentage%%
-
-; Spacing between individual per-core ramps
-ramp-coreload-spacing = 1
-ramp-coreload-0 = ▁
-ramp-coreload-1 = ▂
-ramp-coreload-2 = ▃
-ramp-coreload-3 = ▄
-ramp-coreload-4 = ▅
-ramp-coreload-5 = ▆
-ramp-coreload-6 = ▇
-ramp-coreload-7 = █
+format = <label>
+label = %percentage%%
+format-prefix = "CPU: "
+format-prefix-foreground = #5b
 
 [module/memory]
 type = internal/memory
 interval = 2
-format-prefix-foreground = ${colors.foreground-alt}
-label = RAM: %percentage_used%%
+label = %percentage_used%%
+format-prefix = "RAM: "
+format-prefix-foreground = #5b
 
-[module/wireless-network]
+[module/network]
 type = internal/network
-interface = wlp3s0
-interval = 3.0
-
-; Available tags:
-;   <label-connected> (default)
-;   <ramp-signal>
-format-connected = <label-connected>
-
-; Available tags:
-;   <label-disconnected> (default)
-format-disconnected = <label-disconnected>
-
-; Available tags:
-;   <label-connected> (default)
-;   <label-packetloss>
-;   <animation-packetloss>
-format-packetloss = <label-connected>
-
-; All labels support the following tokens:
-;   %ifname%    [wireless+wired]
-;   %local_ip%  [wireless+wired]
-;   %local_ip6% [wireless+wired]
-;   %essid%     [wireless]
-;   %signal%    [wireless]
-;   %upspeed%   [wireless+wired]
-;   %downspeed% [wireless+wired]
-;   %linkspeed% [wired]
-
-; Default: %ifname% %local_ip%
-label-connected = WiFi: %essid%
-label-connected-foreground = #eefafafa
-
-; Default: (none)
-label-disconnected = not connected
-label-disconnected-foreground = #66ffffff
+interface = enp4s0
+interval = 1.0
+label-connected = "%downspeed% - %upspeed%"
+label-disconnected = "check ur eth!"
+label-disconnected-foreground = ${color.red}
+format-connected-prefix = "NET: "
+format-connected-prefix-foreground = #5b
 
 [module/date]
 type = internal/date
