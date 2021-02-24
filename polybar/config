@@ -1,20 +1,19 @@
-#! /bin/bash
-
 [colors]
-background = #CC282828
-foreground = #ebdbb2
-red = #CC241D
-green = #55ff55
-yellow = #ffff55
-blue = #5555ff
-purple = #ff55ff
-cyan = #55ffff
-white = #bbbbbb
-black = #b5d5ff
+background = #282a36
+foreground = #eff0eb
+red = #ff5c57
+green = #5af78e
+yellow = #f3f99d
+blue = #57c7ff
+purple = #ff6ac1
+cyan = #9aedfe
+white = #f1f1f0
+black = #282a36
+grey = #686868
 
 [bar/example]
 width = 100%
-height = 24
+height = 25
 ;offset-x = 1%
 ;offset-y = 1%
 ;radius = 5.0
@@ -24,23 +23,40 @@ fixed-center = true
 background = ${colors.background}
 foreground = ${colors.foreground}
 
-line-size = 1
-line-color = #f00
+;line-size = 1
+;line-color = #f00
 
 border-size = 5
 border-color = #00000000
 
 padding-left = 0
-padding-right = 2
+padding-right = 1
 
 module-margin-left = 1
 module-margin-right = 1
 
-font-0 = "CozetteVector:style=Medium:antialias=true:size=8;2"
+; Text Fonts
+font-0 = Iosevka Nerd Font:style=Medium:size=10;4
+;font-0 = Cozette:size=15;4
+
+; Icons Fonts
+;font-1 = feather:style=Medium:size=12;3
+font-1 = Iosevka Nerd Font:style=Medium:size=10;4
+
+; Powerline Glyphs
+font-2 = Iosevka Nerd Font:style=Medium:size=19;3
+
+; Larger font size for bar fill icons
+font-3 = Iosevka Nerd Font:style=Medium:size=12;4
+
+; Smaller font size for shorter spaces
+font-4 = Iosevka Nerd Font:style=Medium:size=7;4
+
+font-5 = Noto Sans CJK JP:antialias=tru:size=10;2
 
 modules-left = bspwm
 modules-center = date 
-modules-right = weather network volume memory cpu
+modules-right = download upload ping weather filesystem temperature checkupdates memory cpu_clock
 
 ;tray-position = right
 ;tray-padding = 2
@@ -56,7 +72,24 @@ override-redirect = true
 cursor-click = pointer
 cursor-scroll = ns-resize
 
-separator = |
+;separator = |
+
+[module/checkupdates]
+type = custom/script
+exec = ~/.config/polybar/scripts/checkupdates.sh
+interval = 120
+format-prefix-foreground = ${colors.blue}
+# 
+format-prefix = " "
+label = "%output%"
+
+[module/ping]
+type = custom/script
+exec = ~/.config/polybar/scripts/ping.sh
+format-prefix-foreground = ${colors.yellow}
+format-prefix = " "
+label = "%output:6:8%"
+;label-font = 3	
 
 [module/bat]
 type = custom/script
@@ -71,17 +104,31 @@ type = custom/script
 exec = curl -s 'wttr.in?format=%C+%t'
 exec-if = ping wttr.in -c 1
 interal = 600
-format-prefix = "WEA: "
-format-prefix-foreground = #5b
+format-prefix = "摒  "
+format-prefix-foreground = ${colors.blue}
+
+[module/cpu_clock]
+type = custom/script
+exec = ~/.config/polybar/scripts/cpu_clock.py
+format-prefix-foreground = ${colors.red}
+format-prefix = "龍 "
+label = "%output%"
+
+[module/update]
+type = custom/script
+exec = checkupdates | wc -l
+exec-if = checkupdates -h
+interal = 600
+format-prefix = " "
+format-prefix-foreground = ${colors.blue}
 
 [module/sound]
 type = custom/script
-exec = pamixer --get-volume-human
+exec = echo $(pamixer --get-volume-human)
 exec-if = pamixer
 interal = 0.5
-format-prefix = "VOL: "
+format-prefix = "  墳    "
 format-prefix-foreground = #5b
-
 
 [module/xwindow]
 type = internal/xwindow
@@ -90,29 +137,38 @@ label = %title:0:30:...%
 [module/filesystem]
 type = internal/fs
 interval = 25
-
 mount-0 = /
-
-label-mounted = %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
-label-unmounted = %mountpoint% not mounted
-label-unmounted-foreground = ${colors.foreground-alt}
+format-mounted-prefix-foreground = ${colors.purple}
+# 
+format-mounted-prefix = "﫭 "
+label-mounted = "%used%"
+format-background = ${colors.background}
 
 [module/bspwm]
 type = internal/bspwm
+pin-workspaces = true
+inline-mode = false
+enable-click = true
+enable-scroll = false
+reverse-scroll = false
+fuzzy-match = true
 
 label-focused = %name%
-label-focused-background = ${colors.red}
+;label-focused-background = ${colors.red}
+label-focused-foreground = ${colors.red}
 label-focused-padding = 1
 
 label-occupied = %name%
+;label-occupied-foreground = ${colors.red}
+label-occupied-foreground = ${colors.blue}
 label-occupied-padding = 1
 
-label-urgent = %name%!
-label-urgent-background = ${colors.alert}
+label-urgent = >%name%<
+label-urgent-background = ${colors.blue}
 label-urgent-padding = 1
 
 label-empty = %name%
-label-empty-foreground = ${colors.white}
+label-empty-foreground = ${colors.foreground}
 label-empty-padding = 1
 
 ; Separator in between workspaces
@@ -149,25 +205,49 @@ type = internal/cpu
 interval = 0.5
 format = <label>
 label = %percentage%%
-format-prefix = "CPU: "
-format-prefix-foreground = #5b
+format-prefix = " "
+format-prefix-foreground = ${colors.green}
 
 [module/memory]
 type = internal/memory
 interval = 2
 label = %percentage_used%%
-format-prefix = "RAM: "
-format-prefix-foreground = #5b
+format-prefix = " "
+format-prefix-foreground = ${colors.yellow}
 
 [module/network]
 type = internal/network
 interface = enp4s0
 interval = 1.0
-label-connected = "%downspeed% - %upspeed%"
+label-connected = " %downspeed%  %upspeed%"
 label-disconnected = "check ur eth!"
-label-disconnected-foreground = ${color.red}
-format-connected-prefix = "NET: "
+label-disconnected-foreground = ${colors.red}
+;format-connected-prefix = " "
 format-connected-prefix-foreground = #5b
+
+[module/download]
+type = internal/network
+interface = enp4s0
+interval = 0.5
+accumulate-stats = true
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.green}
+;format-connected-prefix-font = 2
+;label-connected-padding = 2
+;label-connected-font = 3
+label-connected = %downspeed%
+
+[module/upload]
+type = internal/network
+interface = enp4s0
+interval = 0.5
+accumulate-stats = true
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.red}
+;format-connected-prefix-font = 2
+;label-connected-padding = 2
+;label-connected-font = 3
+label-connected = %upspeed%
 
 [module/date]
 type = internal/date
@@ -267,31 +347,13 @@ label-full = Fully charged!
 
 [module/temperature]
 type = internal/temperature
-
-; Seconds to sleep between updates
-; Default: 1
 interval = 1
-
-; Thermal zone to use
-; To list all the zone types, run 
-; $ for i in /sys/class/thermal/thermal_zone*; do echo "$i: $(<$i/type)"; done
-; Default: 0
 thermal-zone = 0
-
-; Full path of temperature sysfs path
-; Use `sensors` to find preferred temperature source, then run
-; $ for i in /sys/class/hwmon/hwmon*/temp*_input; do echo "$(<$(dirname $i)/name): $(cat ${i%_*}_label 2>/dev/null || echo $(basename ${i%_*})) $(readlink -f $i)"; done
-; to find path to desired file
-; Default reverts to thermal zone setting
-hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input
-
-; Base temperature for where to start the ramp (in degrees celsius)
-; Default: 0
-base-temperature = 20
-
-; Threshold temperature to display warning label (in degrees celsius)
-; Default: 80
-warn-temperature = 60
+hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon1/temp1_input
+warn-temperature = 100
+format-prefix-foreground = ${colors.red}
+format-prefix = " "
+label = "%temperature-c%"
 
 [settings]
 screenchange-reload = true
@@ -304,3 +366,5 @@ screenchange-reload = true
 [global/wm]
 margin-top = 5
 margin-bottom = 5
+
+; vim:ft=dosini
